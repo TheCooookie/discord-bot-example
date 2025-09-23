@@ -1,0 +1,76 @@
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v10';
+import dotenv from 'dotenv';
+dotenv.config();
+import fs from 'node:fs';
+import path from 'node:path';
+import { BotCommand } from './src/types/discord'; // Adjust path if your types are elsewhere
+
+const token = '';
+const clientId = '';
+const guildId = '';
+
+if (!token) {
+    console.error('Error: DISCORD_TOKEN is not set in the .env file.');
+    process.exit(1);
+}
+if (!clientId) {
+    console.error('Error: CLIENT_ID is not set in the .env file.');
+    process.exit(1);
+}
+if (!guildId) {
+    console.error('Error: GUILD_ID is not set in the .env file. This script also deletes guild-specific commands.');
+    process.exit(1);
+}
+
+const commandsToDeploy = [];
+const commandsPath = path.join(__dirname, 'src', 'commands'); // Path to your commands directory
+
+console.log(`[DEPLOY] Looking for command files in: ${commandsPath}`);
+
+if (fs.existsSync(commandsPath)) {
+    const commandFiles = fs.readdirSync(commandsPath)
+        .filter(file => (file.endsWith('.ts') || file.endsWith('.js')) && !file.endsWith('.d.ts'));
+
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const commandModule = require(filePath); // Using require for simplicity in this script
+            const command: BotCommand | undefined = commandModule.default || commandModule;
+
+            if (command && command.data) {
+                commandsToDeploy.push(command.data.toJSON());
+                console.log(`[DEPLOY] Added command for deployment: ${command.data.name}`);
+            } else {
+                console.warn(`[DEPLOY][WARN] The command at ${filePath} is missing a "data" property.`);
+            }
+        } catch (error) {
+            console.error(`[DEPLOY][ERROR] Failed to load command at ${filePath}:`, error);
+        }
+    }
+} else {
+    console.warn(`[DEPLOY] Command directory not found: ${commandsPath}. No commands will be deployed.`);
+}
+
+const rest = new REST({ version: '10' }).setToken(token);
+
+(async () => {
+    // To delete all global commands first (optional, but ensures a clean slate if you had old global ones)
+    try {
+        console.log(`[DEPLOY] Clearing all global application (/) commands.`);
+        await rest.put(Routes.applicationCommands(clientId), { body: [] });
+        console.log(`[DEPLOY] Successfully cleared all global application (/) commands.`);
+    } catch (error) {
+        console.error('[DEPLOY][ERROR] Failed to clear global application commands:', error);
+    }
+
+    // Registering new guild commands
+    try {
+        console.log(`[DEPLOY] Started refreshing ${commandsToDeploy.length} application (/) commands for guild ${guildId}.`);
+        await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commandsToDeploy });
+        console.log(`[DEPLOY] Successfully reloaded ${commandsToDeploy.length} application (/) commands for guild ${guildId}.`);
+    } catch (error) {
+        console.error(`[DEPLOY][ERROR] Failed to refresh application commands for guild ${guildId}:`, error);
+    }
+})();

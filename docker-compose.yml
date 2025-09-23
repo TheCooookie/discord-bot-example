@@ -1,0 +1,11 @@
+services:
+  bot:
+    container_name: aaeeg_bot
+    build: .
+    restart: unless-stopped
+    networks:
+      - redis
+networks:
+  redis:
+    external: true
+    name: redis
