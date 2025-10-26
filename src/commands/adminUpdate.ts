@@ -3,7 +3,7 @@ import { BotCommand } from '../types/discord.d';
 import sequelize from '../data/database';
 import { DataTypes, Model } from 'sequelize';
 import config from '../config';
-import { logToChannel } from '../utils/logToChannel'; // <-- Add this import
+import { logToChannel } from '../utils/logToChannel';
 
 const ERROR_COLOR = 0xFF0000;
 const SUCCESS_COLOR = 0x00FF00;

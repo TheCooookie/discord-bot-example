@@ -88,7 +88,7 @@ async function checkVerificationTask(discordClient: Client) {
                             .setThumbnail('https://i.imgur.com/wkxEhKp.png')
                             .setColor('Red')
                             .setTimestamp();
-                    //await member.send({ embeds: [embed] });
+                    await member.send({ embeds: [embed] });
                     console.log(`[CheckVerification] Notified ${member.user.tag} about expiring verification.`);
                     await logToChannel(discordClient, {
                         title: 'Verification Expiring Soon',
@@ -104,6 +104,35 @@ async function checkVerificationTask(discordClient: Client) {
                     });
                 }
             }
+            if (diffDays === 8) {
+                try {
+                    const embed = new EmbedBuilder()
+                            .setTitle('La vérification sur le serveur AAE ESPORT & GAMING va expirer.')
+                            .setDescription(
+                                'Votre vérification expire dans 7 jours.\n' +
+                                'Pour continuer à bénéficier de votre rôle Vérifé, vous pouvez vous re-verifier sur:\n' +
+                                'https://aaeeg.fr/user/verify'
+                            )
+                            .setThumbnail('https://i.imgur.com/wkxEhKp.png')
+                            .setColor('Red')
+                            .setTimestamp();
+                    await member.send({ embeds: [embed] });
+                    console.log(`[CheckVerification] Notified ${member.user.tag} about expiring verification.`);
+                    await logToChannel(discordClient, {
+                        title: 'Verification Expiring Soon',
+                        description: `Notified **${member.user.tag}** (\`${member.id}\`) about verification expiring in 7 days.`,
+                        color: 0xffa500
+                    });
+                } catch (e) {
+                    console.warn(`[CheckVerification] Could not DM ${member.user.tag}.`);
+                    await logToChannel(discordClient, {
+                        title: 'DM Failed',
+                        description: `Could not DM **${member.user.tag}** (\`${member.id}\`) about expiring verification.`,
+                        color: 0xffa500
+                    });
+                }
+            }
+            
             
         } catch (err) {
             console.warn(`[CheckVerification] Could not process user ${user.id}:`);

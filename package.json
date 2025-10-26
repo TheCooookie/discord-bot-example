@@ -2,24 +2,26 @@
   "name": "aaeeg-bot-v2",
   "version": "1.0.0",
   "main": "bot.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/bot.js",
-    "dev": "nodemon src/bot.ts",
-    "deploy": "ts-node deploy-commands.ts"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "@discordjs/rest": "^2.5.1",
+    "@napi-rs/canvas": "^0.1.80",
     "discord.js": "^14.21.0",
     "dotenv": "^16.6.1",
     "ioredis": "^5.6.1",
     "pg": "^8.16.3",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
+  },
+  "scripts": {
+    "build": "tsc && cp -r src/img dist/",
+    "start": "node dist/bot.js",
+    "dev": "nodemon src/bot.ts",
+    "deploy": "ts-node deploy-commands.ts",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@types/ioredis": "^4.28.10",
