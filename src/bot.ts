@@ -1,7 +1,7 @@
 import { Client, Collection, Events, Partials, GatewayIntentBits, MessageFlags } from 'discord.js';
 import dotenv from 'dotenv';
-import { testRedisConnection, testDatabaseConnection } from './data/data';
-import { BotCommand } from './types/discord.d';
+import { testRedisConnection } from './data/data';
+import { BotCommand } from './types/discord';
 import { loadCommands } from './loaders/commandLoader';
 import { loadPlugins } from './loaders/pluginLoader';
 import { loadTasks } from './loaders/taskLoader';
@@ -68,7 +68,6 @@ client.on(Events.InteractionCreate, async interaction => {
 async function initializeApp() {
     try {
         await testRedisConnection();
-        await testDatabaseConnection();
         await loadCommands(client);
         await loadPlugins(client);
         await loadTasks(client);

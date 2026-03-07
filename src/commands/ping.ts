@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, MessageFlags, InteractionContextType, ApplicationIntegrationType } from 'discord.js';
-import { BotCommand } from '../types/discord.d';
+import { BotCommand } from '../types/discord';
 /**
  * @type {BotCommand}
  * @description Defines the Discord bot command '/ping'. This command is a simple

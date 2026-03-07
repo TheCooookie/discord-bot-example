@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Client } from 'discord.js';
-import { BotCommand } from '../types/discord.d';
+import { BotCommand } from '../types/discord';
 
 /**
  * @async
