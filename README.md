@@ -8,7 +8,7 @@ Make sure to install the dependencies:
 
 ```bash
 # npm
-npm install
+pnpm install
 ```
 
 ## Development Server
@@ -18,7 +18,7 @@ Start the development server on:
 
 ```bash
 # npm
-npm run dev
+pnpm run dev
 ```
 
 ## Production
