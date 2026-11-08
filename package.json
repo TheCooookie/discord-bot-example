@@ -1,7 +1,7 @@
 {
   "name": "aaeeg-bot-v2",
   "version": "1.0.0",
-  "main": "bot.js",
+  "main": "dist/bot.js",
   "keywords": [],
   "author": "",
   "license": "ISC",

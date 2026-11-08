@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import fs from 'node:fs';
 import path from 'node:path';
-import { BotCommand } from './src/types/discord'; // Adjust path if your types are elsewhere
+import { BotCommand } from './src/types/discord';
 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
@@ -24,7 +24,7 @@ if (!guildId) {
 }
 
 const commandsToDeploy = [];
-const commandsPath = path.join(__dirname, 'src', 'commands'); // Path to your commands directory
+const commandsPath = path.join(__dirname, 'src', 'commands');
 
 console.log(`[DEPLOY] Looking for command files in: ${commandsPath}`);
 

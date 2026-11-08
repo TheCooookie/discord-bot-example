@@ -1,4 +1,4 @@
-import { Client, Collection, Events, Partials, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import dotenv from 'dotenv';
 import { testRedisConnection } from './data/data';
 import { BotCommand } from './types/discord';
@@ -71,7 +71,7 @@ async function initializeApp() {
         await loadCommands(client);
         await loadInitializers(client, 'plugins', 'PLUGINS');
         await loadInitializers(client, 'tasks', 'TASKS');
-        client.login(token);
+        await client.login(token);
     } catch (error) {
         console.error("Failed to initialize bot:", error);
         process.exit(1);

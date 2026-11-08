@@ -12,11 +12,6 @@ const command: BotCommand = {
         .setContexts([InteractionContextType.Guild])
         .setIntegrationTypes([ApplicationIntegrationType.GuildInstall]),
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!interaction.guild) {
-            await interaction.reply({ content: 'This command can only be used in a server.', flags: MessageFlags.Ephemeral });
-            return;
-        }
-
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('🏓 Pong!')
