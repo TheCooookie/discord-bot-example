@@ -19,8 +19,3 @@ node_modules/
 .env
 .env.local
 .env.*.local
-!.env.example
-
-# Local configuration files with secrets
-deploy-commands.ts
-!deploy-commands.ts.exemple
