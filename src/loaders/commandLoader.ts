@@ -3,18 +3,9 @@ import path from 'node:path';
 import { Client } from 'discord.js';
 import { BotCommand } from '../types/discord';
 
-/**
- * @async
- * @function loadCommands
- * @description Discovers, loads, and registers all command files from the '../commands' directory.
- * Each file in this directory is expected to define a Discord command conforming to the `BotCommand` interface.
- * Loaded commands are stored in the `client.commands` Collection for later execution.
- * @param {Client} client The Discord.js client instance. It is expected that `client.commands`
- * is a Discord.js Collection where commands will be stored.
- * @returns {Promise<void>} A Promise that resolves once all eligible command files have been processed.
- */
+/** Loads every file in src/commands into `client.commands`. Bad files are logged and skipped. */
 export async function loadCommands(client: Client) {
-    const commandsPath = path.join(__dirname, '..', 'commands'); // Adjusted path
+    const commandsPath = path.join(__dirname, '..', 'commands');
     console.log(`[CMDS] Looking for commands in: ${commandsPath}`);
 
     if (!fs.existsSync(commandsPath)) {

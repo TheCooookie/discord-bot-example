@@ -7,6 +7,7 @@ interface ScheduledTask {
     isRunning?: boolean;
 }
 
+/** Runs named functions on a fixed interval. A run is skipped while the previous one is still going. */
 class TaskRunner {
     private scheduledTasks: Map<string, ScheduledTask>;
 
@@ -15,14 +16,7 @@ class TaskRunner {
         console.log('[TaskRunner] Initialized.');
     }
 
-    /**
-     * Schedules a new task to run at regular intervals.
-     * If a task with the same name already exists, it will be overwritten.
-     * @param name Unique name of the task.
-     * @param intervalMs Interval in milliseconds between each execution.
-     * @param taskFunction The function to execute.
-     * @param runImmediately If true, the task runs immediately after being scheduled, then at the defined interval.
-     */
+    /** Schedules `taskFunction` every `intervalMs`. Replaces any task with the same name. */
     public scheduleTask(
         name: string,
         intervalMs: number,
@@ -34,7 +28,6 @@ class TaskRunner {
             return;
         }
 
-        // Stop and remove an existing task with the same name
         if (this.scheduledTasks.has(name)) {
             this.stopTask(name);
         }
@@ -42,12 +35,10 @@ class TaskRunner {
         const taskWrapper = async () => {
             const task = this.scheduledTasks.get(name);
             if (task && task.isRunning) {
-                // console.debug(`[TaskRunner] Task "${name}" is already running, skipping this iteration.`);
                 return;
             }
             if (task) task.isRunning = true;
 
-            // console.debug(`[TaskRunner] Executing task: ${name}`);
             try {
                 await taskFunction();
                 if (task) task.lastRun = new Date();
@@ -57,7 +48,7 @@ class TaskRunner {
                 if (task) task.isRunning = false;
             }
         };
-        
+
         const timerId = setInterval(taskWrapper, intervalMs);
 
         // Register before the first run so the isRunning guard sees this task.
@@ -76,10 +67,7 @@ class TaskRunner {
         console.log(`[TaskRunner] Task "${name}" scheduled to run every ${intervalMs / 1000} seconds.`);
     }
 
-    /**
-     * Stops a specific scheduled task.
-     * @param name Name of the task to stop.
-     */
+    /** Stops one task. Returns false if no task has that name. */
     public stopTask(name: string): boolean {
         const task = this.scheduledTasks.get(name);
         if (task) {
@@ -92,9 +80,7 @@ class TaskRunner {
         return false;
     }
 
-    /**
-     * Stops all scheduled tasks.
-     */
+    /** Stops every task. */
     public stopAllTasks(): void {
         this.scheduledTasks.forEach((task) => clearInterval(task.id));
         this.scheduledTasks.clear();

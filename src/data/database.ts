@@ -1,12 +1,12 @@
 import { Sequelize } from 'sequelize';
 
-// Env vars are loaded by `import 'dotenv/config'` at the top of bot.ts.
-
+// Example Postgres connection. Not used yet: call connectToDatabase() from bot.ts to enable it.
 const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
   dialect: 'postgres',
   logging: false,
 });
 
+/** Checks the database connection and logs the result. */
 export const connectToDatabase = async () => {
   try {
     await sequelize.authenticate();

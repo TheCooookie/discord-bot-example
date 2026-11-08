@@ -1,10 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, MessageFlags, InteractionContextType, ApplicationIntegrationType } from 'discord.js';
 import { BotCommand } from '../types/discord';
-/**
- * @type {BotCommand}
- * @description Defines the Discord bot command '/ping'. This command is a simple
- * utility to check the bot's responsiveness and display its latency.
- */
+
+/** /ping: replies with the bot's latency. Servers only. */
 const command: BotCommand = {
     data: new SlashCommandBuilder()
         .setName('ping')

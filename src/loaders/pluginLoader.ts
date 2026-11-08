@@ -5,15 +5,8 @@ import { Client } from 'discord.js';
 type Initializer = (client: Client) => void | Promise<void>;
 
 /**
- * @async
- * @function loadInitializers
- * @description Discovers, loads, and initializes every file in `src/<folder>` (e.g. 'plugins', 'tasks').
- * Each file must have a `default` export that is a function taking the Discord.js client,
- * so it can set up event listeners, scheduled tasks or other functionality.
- * @param {Client} client The Discord.js client instance passed to each initializer.
- * @param {string} folder Folder name next to `loaders/`, e.g. 'plugins' or 'tasks'.
- * @param {string} label Log prefix, e.g. 'PLUGINS' or 'TASKS'.
- * @returns {Promise<void>} Resolves once every file has been tried, even if some failed.
+ * Loads every file in src/<folder> (e.g. 'plugins', 'tasks') and calls its default export with the client.
+ * Bad files are logged and skipped.
  */
 export async function loadInitializers(client: Client, folder: string, label: string): Promise<void> {
     const dirPath = path.join(__dirname, '..', folder);
@@ -34,7 +27,7 @@ export async function loadInitializers(client: Client, folder: string, label: st
             const initialize: Initializer | undefined = module.default;
 
             if (typeof initialize === 'function') {
-                await initialize(client); // Await in case the init is async
+                await initialize(client);
                 console.log(`[${label}] Initialized: ${file}`);
             } else {
                 console.warn(`[${label}][WARN] ${filePath} does not have a valid default export function.`);

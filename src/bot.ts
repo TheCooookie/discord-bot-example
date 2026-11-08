@@ -1,4 +1,5 @@
-import 'dotenv/config'; // must stay first: later imports (e.g. data/redis) read process.env when loaded
+// Must stay the first import: modules below read process.env as soon as they load.
+import 'dotenv/config';
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import { testRedisConnection } from './data/redis';
 import { BotCommand } from './types/discord';
@@ -21,11 +22,11 @@ const client = new Client({
 });
 client.commands = new Collection<string, BotCommand>();
 
+// Registers the loaded slash commands with Discord on every start.
+// GUILD_ID set: one server, updates instantly. Empty: global, can take up to an hour.
 client.once(Events.ClientReady, async c => {
     console.log(`Ready! Logged in as ${c.user.tag}`);
 
-    // Register the loaded slash commands with Discord on every start (replaces the old deploy script).
-    // With GUILD_ID: guild commands, which update instantly. Without: global commands.
     const guildId = process.env.GUILD_ID;
     const body = client.commands.map(command => command.data.toJSON());
     try {
@@ -37,11 +38,7 @@ client.once(Events.ClientReady, async c => {
     }
 });
 
-/**
- * Event handler for interaction creation, specifically for chat input commands (slash commands).
- * It attempts to find and execute the corresponding command.
- * @param {ChatInputCommandInteraction} interaction The interaction object received from Discord.
- */ 
+// Runs the matching slash command and tells the user if it fails.
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
@@ -57,7 +54,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch (error) {
         console.error(`Error executing ${interaction.commandName}:`, error);
-        // The reply itself can fail (e.g. interaction expired); an uncaught rejection here would kill the process.
+        // The reply can fail too (e.g. expired interaction); left uncaught it would crash the bot.
         if (interaction.replied || interaction.deferred) {
             await interaction.followUp({ content: 'There was an error executing this command!', flags: MessageFlags.Ephemeral }).catch(console.error);
         } else {
@@ -67,13 +64,9 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 /**
- * Asynchronously initializes the application by:
- * 1. Testing the connection to Redis (add connectToDatabase() from ./data/database here if you use Postgres).
- * 2. Loading Discord slash commands.
- * 3. Loading bot plugins.
- * 4. Loading scheduled tasks.
- * 5. Logging the bot into Discord.
- * If any step fails, it logs an error and exits the process.
+ * Checks Redis, loads commands, plugins and tasks, then logs in.
+ * Exits the process if any step fails.
+ * Using Postgres? Add `connectToDatabase()` from ./data/database here.
  */
 async function initializeApp() {
     try {

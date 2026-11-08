@@ -1,6 +1,5 @@
 import Redis from 'ioredis';
 
-// Env vars are loaded by `import 'dotenv/config'` at the top of bot.ts.
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT;
 const redisPassword = process.env.REDIS_PASSWORD;
@@ -16,7 +15,7 @@ const redisClient = new Redis({
   retryStrategy: times => Math.min(times * 50, 2000),
 });
 
-// Throws so initializeApp() stops the bot when Redis is unreachable.
+/** Pings Redis. Throws if it is unreachable, so the bot does not start without it. */
 export async function testRedisConnection(): Promise<void> {
   const pingResponse = await redisClient.ping();
   if (pingResponse !== 'PONG') {

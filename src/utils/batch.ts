@@ -1,11 +1,6 @@
 /**
- * Processes an array of items in batches with an optional delay between batches.
- * This is useful for rate-limiting operations or managing resource consumption.
- * * @template T The type of items in the array.
- * @param {T[]} items The array of items to process.
- * @param {number} batchSize The maximum number of items to process in a single batch.
- * @param {number} delayMs The delay in milliseconds to wait after processing each batch (except the last one).
- * @param {(item: T) => Promise<void>} handler The asynchronous function to call for each item.
+ * Runs `handler` on `items`, `batchSize` at a time, waiting `delayMs` between batches.
+ * Useful to stay under Discord rate limits.
  */
 export async function processInBatches<T>(
     items: T[],
