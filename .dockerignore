@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.exemple
+node_modules
+dist
+.git
+.idea
+graphify-out
+deploy-commands.ts

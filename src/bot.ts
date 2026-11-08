@@ -40,7 +40,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
-        await interaction.reply({ content: `Command not found.`, flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: `Command not found.`, flags: MessageFlags.Ephemeral }).catch(console.error);
         return;
     }
 
@@ -48,10 +48,11 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch (error) {
         console.error(`Error executing ${interaction.commandName}:`, error);
+        // The reply itself can fail (e.g. interaction expired); an uncaught rejection here would kill the process.
         if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({ content: 'There was an error executing this command!', flags: MessageFlags.Ephemeral });
+            await interaction.followUp({ content: 'There was an error executing this command!', flags: MessageFlags.Ephemeral }).catch(console.error);
         } else {
-            await interaction.reply({ content: 'There was an error executing this command!', flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: 'There was an error executing this command!', flags: MessageFlags.Ephemeral }).catch(console.error);
         }
     }
 });

@@ -3,6 +3,7 @@ services:
     container_name: aaeeg_bot
     build: .
     restart: unless-stopped
+    env_file: .env
     networks:
       - redis
 networks:

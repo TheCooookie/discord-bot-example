@@ -4,12 +4,11 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod --frozen-lockfile
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm install --only=dev
-RUN npm run build
+RUN pnpm run build && pnpm prune --prod
 
 CMD ["pnpm", "start"]

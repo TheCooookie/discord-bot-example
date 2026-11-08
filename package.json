@@ -21,8 +21,7 @@
     "build": "tsc",
     "start": "node dist/bot.js",
     "dev": "nodemon src/bot.ts",
-    "deploy": "ts-node deploy-commands.ts",
-    "postinstall": "npm run build"
+    "deploy": "ts-node deploy-commands.ts"
   },
   "devDependencies": {
     "@types/ioredis": "^4.28.10",
