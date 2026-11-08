@@ -1,0 +1,3 @@
+# sqlite3 is an optional peer of sequelize; this bot uses Postgres, so skip its native build.
+allowBuilds:
+  sqlite3: false

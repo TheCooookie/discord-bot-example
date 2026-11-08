@@ -4,6 +4,8 @@ Look at the [DiscordJS documentation](https://discord.js.org/docs/packages/disco
 
 ## Setup
 
+The bot uses the privileged **Server Members Intent**. Enable it in the [Discord Developer Portal](https://discord.com/developers/applications) under Bot → Privileged Gateway Intents, or the bot exits at login with "Used disallowed intents".
+
 Make sure to install the dependencies:
 
 ```bash

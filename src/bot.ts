@@ -1,11 +1,9 @@
+import 'dotenv/config'; // must stay first: later imports (e.g. data/redis) read process.env when loaded
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
-import dotenv from 'dotenv';
-import { testRedisConnection } from './data/data';
+import { testRedisConnection } from './data/redis';
 import { BotCommand } from './types/discord';
 import { loadCommands } from './loaders/commandLoader';
 import { loadInitializers } from './loaders/pluginLoader';
-
-dotenv.config();
 
 const token = process.env.DISCORD_TOKEN;
 

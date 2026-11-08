@@ -8,7 +8,6 @@
   "description": "",
   "dependencies": {
     "@discordjs/rest": "^2.6.0",
-    "@napi-rs/canvas": "^0.1.96",
     "discord-api-types": "^0.38.41",
     "discord.js": "^14.25.1",
     "dotenv": "^16.6.1",
@@ -21,7 +20,7 @@
     "start": "node dist/bot.js",
     "dev": "nodemon src/bot.ts",
     "deploy": "ts-node deploy-commands.ts",
-    "test": "node --require ts-node/register --test src/**/*.test.ts"
+    "test": "node --require ts-node/register --test \"src/**/*.test.ts\""
   },
   "devDependencies": {
     "@types/node": "^24.12.0",

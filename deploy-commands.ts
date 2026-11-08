@@ -1,7 +1,5 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import dotenv from 'dotenv';
-dotenv.config();
 import fs from 'node:fs';
 import path from 'node:path';
 import { BotCommand } from './src/types/discord';
@@ -63,6 +61,7 @@ const rest = new REST({ version: '10' }).setToken(token);
         console.log(`[DEPLOY] Successfully cleared all global application (/) commands.`);
     } catch (error) {
         console.error('[DEPLOY][ERROR] Failed to clear global application commands:', error);
+        process.exitCode = 1;
     }
 
     // Registering new guild commands
@@ -72,5 +71,6 @@ const rest = new REST({ version: '10' }).setToken(token);
         console.log(`[DEPLOY] Successfully reloaded ${commandsToDeploy.length} application (/) commands for guild ${guildId}.`);
     } catch (error) {
         console.error(`[DEPLOY][ERROR] Failed to refresh application commands for guild ${guildId}:`, error);
+        process.exitCode = 1;
     }
 })();

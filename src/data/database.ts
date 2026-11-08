@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
 
-dotenv.config();
+// Env vars are loaded by `import 'dotenv/config'` at the top of bot.ts.
 
 const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
   dialect: 'postgres',
