@@ -6,9 +6,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { BotCommand } from './src/types/discord'; // Adjust path if your types are elsewhere
 
-const token = '';
-const clientId = '';
-const guildId = '';
+const token = process.env.DISCORD_TOKEN;
+const clientId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
 
 if (!token) {
     console.error('Error: DISCORD_TOKEN is not set in the .env file.');

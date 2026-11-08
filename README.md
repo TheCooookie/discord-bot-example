@@ -25,7 +25,7 @@ pnpm run dev
 
 Deploy commands when building for production:
 
-Modify deploy-commands.ts.exemple to deploy-commands.ts set token, clientid and guildid. 
+Set `DISCORD_TOKEN`, `CLIENT_ID` and `GUILD_ID` in your `.env` file (see `.env.exemple`).
 
 ```bash
 # npm

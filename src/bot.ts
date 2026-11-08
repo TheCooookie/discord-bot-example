@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 import { testRedisConnection } from './data/data';
 import { BotCommand } from './types/discord';
 import { loadCommands } from './loaders/commandLoader';
-import { loadPlugins } from './loaders/pluginLoader';
-import { loadTasks } from './loaders/taskLoader';
+import { loadInitializers } from './loaders/pluginLoader';
 
 dotenv.config();
 
@@ -59,7 +58,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 /**
  * Asynchronously initializes the application by:
- * 1. Testing connections to Redis and the database.
+ * 1. Testing the connection to Redis (add connectToDatabase() from ./data/database here if you use Postgres).
  * 2. Loading Discord slash commands.
  * 3. Loading bot plugins.
  * 4. Loading scheduled tasks.
@@ -70,8 +69,8 @@ async function initializeApp() {
     try {
         await testRedisConnection();
         await loadCommands(client);
-        await loadPlugins(client);
-        await loadTasks(client);
+        await loadInitializers(client, 'plugins', 'PLUGINS');
+        await loadInitializers(client, 'tasks', 'TASKS');
         client.login(token);
     } catch (error) {
         console.error("Failed to initialize bot:", error);

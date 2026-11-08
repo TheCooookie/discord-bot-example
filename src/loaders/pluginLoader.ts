@@ -2,45 +2,45 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Client } from 'discord.js';
 
-type PluginInitializer = (client: Client) => void | Promise<void>;
+type Initializer = (client: Client) => void | Promise<void>;
 
 /**
  * @async
- * @function loadPlugins
- * @description Discovers, loads, and initializes all plugin files from the '../plugins' directory.
- * Each file in this directory is expected to be a plugin with a `default` export that is a
- * function adhering to the `PluginInitializer` type. These functions are then called with the
- * Discord.js client instance, allowing plugins to set up event listeners, commands, or other functionalities.
- * @param {Client} client The Discord.js client instance that will be passed to each plugin's initializer.
- * @returns {Promise<void>} A Promise that resolves once all eligible plugin files have been processed,
- * regardless of whether their initialization was successful or encountered an error.
+ * @function loadInitializers
+ * @description Discovers, loads, and initializes every file in `src/<folder>` (e.g. 'plugins', 'tasks').
+ * Each file must have a `default` export that is a function taking the Discord.js client,
+ * so it can set up event listeners, scheduled tasks or other functionality.
+ * @param {Client} client The Discord.js client instance passed to each initializer.
+ * @param {string} folder Folder name next to `loaders/`, e.g. 'plugins' or 'tasks'.
+ * @param {string} label Log prefix, e.g. 'PLUGINS' or 'TASKS'.
+ * @returns {Promise<void>} Resolves once every file has been tried, even if some failed.
  */
-export async function loadPlugins(client: Client): Promise<void> {
-    const pluginsPath = path.join(__dirname, '..', 'plugins');
-    console.log(`[PLUGINS] Looking for plugins in: ${pluginsPath}`);
+export async function loadInitializers(client: Client, folder: string, label: string): Promise<void> {
+    const dirPath = path.join(__dirname, '..', folder);
+    console.log(`[${label}] Looking in: ${dirPath}`);
 
-    if (!fs.existsSync(pluginsPath)) {
-        console.warn(`[PLUGINS] Directory not found: ${pluginsPath}. No plugins will be loaded.`);
+    if (!fs.existsSync(dirPath)) {
+        console.warn(`[${label}] Directory not found: ${dirPath}. Nothing will be loaded.`);
         return;
     }
 
-    const pluginFiles = fs.readdirSync(pluginsPath)
+    const files = fs.readdirSync(dirPath)
         .filter(file => (file.endsWith('.ts') || file.endsWith('.js')) && !file.endsWith('.d.ts'));
 
-    for (const file of pluginFiles) {
-        const filePath = path.join(pluginsPath, file);
+    for (const file of files) {
+        const filePath = path.join(dirPath, file);
         try {
-            const pluginModule = await import(filePath);
-            const initialize: PluginInitializer | undefined = pluginModule.default;
+            const module = await import(filePath);
+            const initialize: Initializer | undefined = module.default;
 
             if (typeof initialize === 'function') {
-                await initialize(client); // Await in case the plugin init is async
-                console.log(`[PLUGINS] Initialized plugin: ${file}`);
+                await initialize(client); // Await in case the init is async
+                console.log(`[${label}] Initialized: ${file}`);
             } else {
-                console.warn(`[PLUGINS][WARN] The plugin at ${filePath} does not have a valid default export function.`);
+                console.warn(`[${label}][WARN] ${filePath} does not have a valid default export function.`);
             }
         } catch (error) {
-            console.error(`[PLUGINS][ERROR] Failed to load or initialize plugin at ${filePath}:`, error);
+            console.error(`[${label}][ERROR] Failed to load or initialize ${filePath}:`, error);
         }
     }
 }

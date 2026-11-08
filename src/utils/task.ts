@@ -58,12 +58,9 @@ class TaskRunner {
             }
         };
         
-        if (runImmediately) {
-            taskWrapper();
-        }
-
         const timerId = setInterval(taskWrapper, intervalMs);
 
+        // Register before the first run so the isRunning guard sees this task.
         this.scheduledTasks.set(name, {
             id: timerId,
             name,
@@ -71,6 +68,10 @@ class TaskRunner {
             taskFunction,
             isRunning: false,
         });
+
+        if (runImmediately) {
+            taskWrapper();
+        }
 
         console.log(`[TaskRunner] Task "${name}" scheduled to run every ${intervalMs / 1000} seconds.`);
     }
