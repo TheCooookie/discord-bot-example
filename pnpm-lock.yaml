@@ -8,12 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@discordjs/rest':
-        specifier: ^2.6.0
-        version: 2.6.0
-      discord-api-types:
-        specifier: ^0.38.41
-        version: 0.38.41
       discord.js:
         specifier: ^14.25.1
         version: 14.25.1

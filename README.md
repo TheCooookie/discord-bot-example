@@ -25,14 +25,9 @@ pnpm run dev
 
 ## Production
 
-Deploy commands when building for production:
+Set `DISCORD_TOKEN` in your `.env` file (see `.env.exemple`).
 
-Set `DISCORD_TOKEN`, `CLIENT_ID` and `GUILD_ID` in your `.env` file (see `.env.exemple`).
-
-```bash
-# npm
-pnpm run deploy
-```
+Slash commands are registered with Discord automatically every time the bot starts. Set `GUILD_ID` to register them for one server (updates instantly); leave it empty to register them globally (can take up to an hour to show up).
 
 Build the application when building for production:
 

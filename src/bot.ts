@@ -21,8 +21,20 @@ const client = new Client({
 });
 client.commands = new Collection<string, BotCommand>();
 
-client.once(Events.ClientReady, c => {
+client.once(Events.ClientReady, async c => {
     console.log(`Ready! Logged in as ${c.user.tag}`);
+
+    // Register the loaded slash commands with Discord on every start (replaces the old deploy script).
+    // With GUILD_ID: guild commands, which update instantly. Without: global commands.
+    const guildId = process.env.GUILD_ID;
+    const body = client.commands.map(command => command.data.toJSON());
+    try {
+        await (guildId ? c.application.commands.set(body, guildId) : c.application.commands.set(body));
+        console.log(`[DEPLOY] Registered ${body.length} command(s) ${guildId ? `for guild ${guildId}` : 'globally'}.`);
+    } catch (error) {
+        // Not fatal: commands registered on a previous start keep working.
+        console.error('[DEPLOY][ERROR] Failed to register commands:', error);
+    }
 });
 
 /**
