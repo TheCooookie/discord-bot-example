@@ -8,7 +8,7 @@
   "description": "Starter template for a discord.js v14 bot in TypeScript: slash commands, components, tasks, Redis, Docker.",
   "dependencies": {
     "discord.js": "^14.28.1",
-    "ioredis": "^5.10.0",
+    "ioredis": "^6.0.0",
     "pg": "^8.23.1"
   },
   "scripts": {
