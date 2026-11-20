@@ -1,6 +1,4 @@
-# Install scripts pnpm may run. Both are skipped:
-# sqlite3 is an optional peer of sequelize; this bot uses Postgres, so its native build is not needed.
-# esbuild (used by tsx) ships its binary as an optional dependency; its install script only re-checks it.
+# Install scripts pnpm may run. esbuild (used by tsx) ships its binary as an
+# optional dependency; its install script only re-checks it, so it is skipped.
 allowBuilds:
-  sqlite3: false
   esbuild: false

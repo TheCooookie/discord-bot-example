@@ -2,6 +2,14 @@
 
 A small TypeScript starter for a [discord.js v14](https://discord.js.org/docs/packages/discord.js/main) bot. Copy it, add your commands, run it.
 
+## After you copy this
+
+1. Rename `name` (and `description`) in `package.json`.
+2. Fill in `.env` (see Setup).
+3. Keep `/announce` and its button as a reference, or delete `src/commands/announce.ts` and `src/components/announce.ts`.
+
+Needs Node 26+ and pnpm (the version is pinned in `package.json`).
+
 ## Setup
 
 1. Install the dependencies:
@@ -59,7 +67,7 @@ export default (client: Client) => {
 
 **Need more events?** The bot only asks for the `Guilds` intent. Add intents in `src/bot.ts`. Privileged ones (`GuildMembers`, `GuildPresences`, `MessageContent`) must also be switched on in the Developer Portal under Bot → Privileged Gateway Intents.
 
-**Postgres?** Set `DATABASE_URL` and call `connectToDatabase()` from `src/data/database.ts` in `initializeApp()` in `src/bot.ts`.
+**Postgres?** Set `DATABASE_URL` and call `connectToDatabase()` from `src/data/database.ts` in `initializeApp()` in `src/bot.ts`. Query with the exported `pg` pool and always pass values as parameters: `pool.query('SELECT * FROM t WHERE guild_id = $1', [guildId])`. Want an ORM? Swap in Drizzle or Prisma.
 
 **Many Discord calls at once?** `processInBatches` in `src/utils/batch.ts` helps stay under the rate limits.
 
@@ -83,7 +91,7 @@ pnpm typecheck
 pnpm test
 ```
 
-GitHub Actions runs both, plus the build, on every push (`.github/workflows/ci.yml`).
+GitHub Actions runs both, plus the build, on every push (`.github/workflows/ci.yml`). Dependabot opens weekly PRs to keep dependencies current (`.github/dependabot.yml`).
 
 ## Production
 

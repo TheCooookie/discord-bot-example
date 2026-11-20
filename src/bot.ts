@@ -1,5 +1,4 @@
-// Must stay the first import: modules below read process.env as soon as they load.
-import 'dotenv/config';
+// .env is loaded by Node itself (--env-file-if-exists in package.json scripts).
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import redisClient, { testRedisConnection } from './data/redis';
 import { BotCommand, BotComponent } from './types/discord';
@@ -91,10 +90,15 @@ process.on('unhandledRejection', reason => console.error('[Process] Unhandled pr
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
     process.once(signal, async () => {
         console.log(`${signal} received, shutting down.`);
-        taskRunner.stopAllTasks();
-        await client.destroy();
-        await redisClient?.quit();
-        process.exit(0);
+        try {
+            taskRunner.stopAllTasks();
+            await client.destroy();
+            await redisClient?.quit();
+        } catch (error) {
+            console.error('[Shutdown] Error while closing connections:', error);
+        } finally {
+            process.exit(0);
+        }
     });
 }
 
