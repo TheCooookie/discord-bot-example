@@ -1,12 +1,23 @@
 services:
   bot:
-    container_name: aaeeg_bot
     build: .
     restart: unless-stopped
+    # Forwards docker stop's SIGTERM to node so the bot shuts down cleanly.
+    init: true
     env_file: .env
-    networks:
+    # Overrides .env so the bot uses the Redis container below.
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+    depends_on:
       - redis
-networks:
+
   redis:
-    external: true
-    name: redis
+    image: redis:8-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

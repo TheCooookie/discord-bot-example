@@ -6,14 +6,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
   logging: false,
 });
 
-/** Checks the database connection and logs the result. */
+/** Checks the database connection. Throws if it fails, so the bot does not start without it. */
 export const connectToDatabase = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('[Postgresql] Connection has been established successfully.');
-  } catch (error) {
-    console.error('[Postgresql] Unable to connect to the database:', error);
-  }
+  await sequelize.authenticate();
+  console.log('[Postgresql] Connection has been established successfully.');
 };
 
 export default sequelize;

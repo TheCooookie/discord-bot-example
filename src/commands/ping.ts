@@ -12,7 +12,7 @@ const command: BotCommand = {
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('🏓 Pong!')
-            .setDescription(`Latency is ${Date.now() - interaction.createdTimestamp}ms.`);
+            .setDescription(`Latency is ${interaction.client.ws.ping}ms.`);
 
         await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     },

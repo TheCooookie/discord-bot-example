@@ -4,26 +4,31 @@ import { Client } from 'discord.js';
 
 type Initializer = (client: Client) => void | Promise<void>;
 
-/**
- * Loads every file in src/<folder> (e.g. 'plugins', 'tasks') and calls its default export with the client.
- * Bad files are logged and skipped.
- */
-export async function loadInitializers(client: Client, folder: string, label: string): Promise<void> {
+/** Paths of the loadable .ts/.js files in src/<folder>, or [] (with a warning) if the folder is missing. */
+export function listModules(folder: string, label: string): string[] {
     const dirPath = path.join(__dirname, '..', folder);
     console.log(`[${label}] Looking in: ${dirPath}`);
 
     if (!fs.existsSync(dirPath)) {
         console.warn(`[${label}] Directory not found: ${dirPath}. Nothing will be loaded.`);
-        return;
+        return [];
     }
 
-    const files = fs.readdirSync(dirPath)
-        .filter(file => (file.endsWith('.ts') || file.endsWith('.js')) && !file.endsWith('.d.ts'));
+    return fs.readdirSync(dirPath)
+        .filter(file => /\.(ts|js)$/.test(file) && !file.endsWith('.d.ts') && !/\.test\.(ts|js)$/.test(file))
+        .map(file => path.join(dirPath, file));
+}
 
-    for (const file of files) {
-        const filePath = path.join(dirPath, file);
+/**
+ * Loads every file in src/<folder> (e.g. 'plugins', 'tasks') and calls its default export with the client.
+ * Bad files are logged and skipped.
+ */
+export async function loadInitializers(client: Client, folder: string, label: string): Promise<void> {
+    for (const filePath of listModules(folder, label)) {
+        const file = path.basename(filePath);
         try {
-            const module = await import(filePath);
+            // require, not import(): tsx keeps import() as ESM, which rejects Windows paths like C:\...
+            const module = require(filePath);
             const initialize: Initializer | undefined = module.default;
 
             if (typeof initialize === 'function') {

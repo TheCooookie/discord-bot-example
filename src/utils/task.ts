@@ -4,12 +4,13 @@ interface ScheduledTask {
     intervalMs: number;
     taskFunction: () => void | Promise<void>;
     lastRun?: Date;
-    isRunning?: boolean;
 }
 
 /** Runs named functions on a fixed interval. A run is skipped while the previous one is still going. */
 class TaskRunner {
     private scheduledTasks: Map<string, ScheduledTask>;
+    // Keyed by name, not by entry, so a re-scheduled task still waits for its old run to finish.
+    private running = new Set<string>();
 
     constructor() {
         this.scheduledTasks = new Map();
@@ -33,31 +34,26 @@ class TaskRunner {
         }
 
         const taskWrapper = async () => {
-            const task = this.scheduledTasks.get(name);
-            if (task && task.isRunning) {
-                return;
-            }
-            if (task) task.isRunning = true;
-
+            if (this.running.has(name)) return;
+            this.running.add(name);
             try {
                 await taskFunction();
+                const task = this.scheduledTasks.get(name);
                 if (task) task.lastRun = new Date();
             } catch (error) {
                 console.error(`[TaskRunner] Error during execution of task "${name}":`, error);
             } finally {
-                if (task) task.isRunning = false;
+                this.running.delete(name);
             }
         };
 
         const timerId = setInterval(taskWrapper, intervalMs);
 
-        // Register before the first run so the isRunning guard sees this task.
         this.scheduledTasks.set(name, {
             id: timerId,
             name,
             intervalMs,
             taskFunction,
-            isRunning: false,
         });
 
         if (runImmediately) {

@@ -8,6 +8,8 @@ export async function processInBatches<T>(
     delayMs: number,
     handler: (item: T) => Promise<void>
 ) {
+    // 0 or less would loop forever.
+    if (batchSize < 1) throw new RangeError('batchSize must be at least 1');
     for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
         await Promise.all(batch.map(handler));

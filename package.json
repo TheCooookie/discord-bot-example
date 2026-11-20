@@ -1,5 +1,5 @@
 {
-  "name": "aaeeg-bot-v2",
+  "name": "discord-bot-exemple",
   "version": "1.0.0",
   "main": "dist/bot.js",
   "keywords": [],
@@ -16,13 +16,14 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/bot.js",
-    "dev": "nodemon src/bot.ts",
-    "test": "node --require ts-node/register --test \"src/**/*.test.ts\""
+    "dev": "tsx watch src/bot.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.ts\""
   },
+  "packageManager": "pnpm@12.21.0",
   "devDependencies": {
     "@types/node": "^24.12.0",
-    "nodemon": "^3.1.11",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }

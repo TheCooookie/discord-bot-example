@@ -1,6 +1,7 @@
 FROM node:24-alpine
 
-RUN npm install -g pnpm@12.18.0
+# Installs the pnpm version pinned in package.json "packageManager".
+RUN corepack enable
 
 WORKDIR /app
 
@@ -13,4 +14,5 @@ RUN pnpm run build && pnpm prune --prod
 
 USER node
 
-CMD ["pnpm", "start"]
+# node directly, not pnpm, so stop signals reach the bot.
+CMD ["node", "dist/bot.js"]
