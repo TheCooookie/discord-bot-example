@@ -63,6 +63,19 @@ export default (client: Client) => {
 
 **Many Discord calls at once?** `processInBatches` in `src/utils/batch.ts` helps stay under the rate limits.
 
+## Scaling
+
+The bot is built for many servers. Commands register globally when `GUILD_ID` is empty, and it uses `shards: 'auto'`: discord.js opens as many shards (gateway connections) as Discord asks for, all in one process. Discord requires sharding from 2,500 servers; this handles it with no code change, and one process copes with a few tens of thousands of servers.
+
+Past that, move to one process per shard with discord.js's `ShardingManager`. Then:
+
+- **Register commands from one place:** only shard 0, or a separate deploy script. Today every `ClientReady` would send them.
+- **Run tasks once:** only on shard 0, or behind a Redis lock. Otherwise each process runs them.
+- **Counts are per shard:** `client.guilds.cache.size` only sees that shard's servers. Use `client.shard.fetchClientValues('guilds.cache.size')` for totals.
+- **Share state through Redis:** memory is per process.
+
+Store anything per server (settings, counters) by guild id, e.g. Redis key `guild:<id>:settings`, so it works the same at any size.
+
 ## Checks
 
 ```bash

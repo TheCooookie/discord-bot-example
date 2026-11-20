@@ -18,6 +18,9 @@ if (!token) {
 // privileged ones (GuildMembers, GuildPresences, MessageContent) must also be enabled in the Developer Portal.
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
+    // Opens as many shards as Discord recommends, all in this process. 1 shard below 2,500 servers;
+    // required above it. See "Scaling" in the README for when to move to one process per shard.
+    shards: 'auto',
 });
 client.commands = new Collection<string, BotCommand>();
 client.components = new Collection<string, BotComponent>();
